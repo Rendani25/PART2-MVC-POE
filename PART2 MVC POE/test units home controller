@@ -1,0 +1,137 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using PART2_MVC_POE.Controllers;
+using PART2_MVC_POE.Models;
+using UploadFileToDb.Data;
+using UploadFileToDb.Models;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace UploadFileToDb.Tests.Controllers
+{
+    public class HomeControllerTests
+    {
+        private readonly HomeController _controller;
+        private readonly Mock<ILogger<HomeController>> _loggerMock;
+        private readonly ApplicationDbContext _context;
+
+        public HomeControllerTests()
+        {
+            // Use an in-memory database for testing
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("TestDatabase")
+                .Options;
+
+            _context = new ApplicationDbContext(options);
+            _loggerMock = new Mock<ILogger<HomeController>>();
+            var configurationMock = new Mock<IConfiguration>();
+
+            _controller = new HomeController(configurationMock.Object, _loggerMock.Object, _context);
+        }
+
+        [Fact]
+        public async Task Index_ReturnsViewWithEmployees()
+        {
+            // Arrange
+            _context.Employees.Add(new Employee { EmployeeId = 1, FirstName = "John", LastName = "Doe" });
+            _context.Employees.Add(new Employee { EmployeeId = 2, FirstName = "Jane", LastName = "Smith" });
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _controller.Index();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<IEnumerable<Employee>>(viewResult.Model);
+            Assert.Equal(2, model.Count());
+        }
+
+        [Fact]
+        public async Task Details_ReturnsNotFound_WhenIdIsNull()
+        {
+            // Act
+            var result = await _controller.Details(null);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task Create_ValidEmployee_RedirectsToIndex()
+        {
+            // Arrange
+            var employee = new Employee { EmployeeId = 1, FirstName = "John", LastName = "Doe" };
+
+            // Act
+            var result = await _controller.Create(employee);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(nameof(HomeController.Index), redirectResult.ActionName);
+            Assert.Single(_context.Employees); // Ensure the employee was added
+        }
+
+        [Fact]
+        public async Task Edit_EmployeeNotFound_ReturnsNotFound()
+        {
+            // Act
+            var result = await _controller.Edit(999); // Non-existing ID
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteConfirmed_ValidId_DeletesEmployeeAndRedirects()
+        {
+            // Arrange
+            var employee = new Employee { EmployeeId = 1, FirstName = "John", LastName = "Doe" };
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _controller.DeleteConfirmed(1);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(nameof(HomeController.Index), redirectResult.ActionName);
+            Assert.Empty(await _context.Employees.ToListAsync()); // Ensure the employee was deleted
+        }
+
+        [Fact]
+        public async Task Upload_ValidFile_SavesFileAndRedirects()
+        {
+            // Arrange
+            var fileMock = new Mock<IFormFile>();
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write("Test File Content");
+            writer.Flush();
+            stream.Position = 0; // Reset the stream position
+
+            fileMock.Setup(f => f.Length).Returns(stream.Length);
+            fileMock.Setup(f => f.OpenReadStream()).Returns(stream);
+            fileMock.Setup(f => f.FileName).Returns("testfile.pdf");
+            fileMock.Setup(f => f.ContentType).Returns("application/pdf");
+
+            var vm = new FileUploadViewModel.FileUploadViewModel
+            {
+                Description = "Test file upload"
+            };
+
+            // Act
+            var result = await _controller.Upload(vm, fileMock.Object);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(nameof(HomeController.Index), redirectResult.ActionName);
+            Assert.Single(await _context.FileCreations.ToListAsync()); // Ensure the file record was created
+        }
+
+        // Additional tests for validation errors and other scenarios can be added here.
+    }
+}
