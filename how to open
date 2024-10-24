@@ -1,0 +1,31 @@
+How to Open Your Project in Visual Studio
+Launch Visual Studio:
+
+Open Visual Studio on your computer.
+Open Your Project:
+
+Click on File in the top menu.
+Select Open > Project/Solution....
+Navigate to the folder where your project is located (e.g., C:\Users\RC_Student_lab\Videos\PART2 MVC POE\).
+Select the .sln (solution) file and click Open.
+Find the HomeController:
+
+In the Solution Explorer on the right side of Visual Studio, expand the project nodes to find your Controllers folder.
+Double-click on HomeController.cs to open it in the editor.
+Locate the Error:
+
+Scroll to line 121, or search for the specific code line that is causing the error (you can use Ctrl + G to go to a specific line number).
+Identify the line that tries to assign the list of FileCreations to SystemFiles.
+Modify the Code:
+
+Implement the mapping code I provided in the previous messages.
+Save your changes by clicking File > Save or using the shortcut Ctrl + S.
+Build the Project:
+
+After making changes, it’s good practice to build your project to check for errors.
+Click on Build in the top menu and then select Build Solution (or press Ctrl + Shift + B).
+Check the Error List window to see if the error has been resolved.
+Run the Application:
+
+To test the changes, you can run the application by clicking the Start button (green play button) or pressing F5.
+Navigate to the upload page in your application to see if it works as expected.
