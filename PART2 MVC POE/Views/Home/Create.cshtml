@@ -1,0 +1,48 @@
+﻿@model UploadFileToDb.Models.Employee
+
+@{
+    ViewData["Title"] = "Create Employee";
+}
+
+<h1>Create New Employee</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="FirstName" class="control-label"></label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+
+        <label asp-for="LastName" class="control-label"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+
+        <label asp-for="Password" class="control-label"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+
+        <label asp-for="PhoneNumber" class="control-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+        <label asp-for="HireDate" class="control-label"></label>
+        <input asp-for="HireDate" class="form-control" type="date" />
+        <span asp-validation-for="HireDate" class="text-danger"></span>
+
+        <!-- EmployeeId is usually auto-generated, so you might want to remove this unless needed -->
+        @*<label asp-for="EmployeeId" class="control-label"></label>
+        <input asp-for="EmployeeId" class="form-control" readonly />
+        <span asp-validation-for="EmployeeId" class="text-danger"></span>*@
+
+        <input type="submit" value="Create Employee" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

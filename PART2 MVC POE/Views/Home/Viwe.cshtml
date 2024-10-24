@@ -1,0 +1,49 @@
+﻿@model PART2_MVC_POE.Models.ApprovalForm
+
+<h2>Submitted Forms</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Submission Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var form in Model)
+        {
+            <tr>
+                <td>@form.Title</td>
+                <td>@form.Description</td>
+                <td>@form.SubmissionDate.ToShortDateString()</td>
+                <td>
+                    @if (form.Status == "Pending")
+                    {
+                        <span class="badge bg-warning">@form.Status</span>
+                    }
+                    else if (form.Status == "Approved")
+                    {
+                        <span class="badge bg-success">@form.Status</span>
+                    }
+                    else if (form.Status == "Rejected")
+                    {
+                        <span class="badge bg-danger">@form.Status</span>
+                    }
+                </td>
+                <td>
+                    @if (form.Status == "Pending")
+                    {
+                        <a asp-action="Approve" asp-route-id="@form.Id" class="btn btn-success">Approve</a>
+                        <a asp-action="Reject" asp-route-id="@form.Id" class="btn btn-danger">Reject</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No actions available</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

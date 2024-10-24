@@ -1,0 +1,37 @@
+﻿@model IEnumerable<UploadFileToDb.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employees List";
+}
+
+<h1>Employees</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Employee</a><br/>
+
+    <a asp-action="Upload" class="btn btn-secondary">Create New Employee</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.Email</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@employee.EmployeeId">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@employee.EmployeeId">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@employee.EmployeeId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

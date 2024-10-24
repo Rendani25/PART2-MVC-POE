@@ -1,0 +1,29 @@
+﻿@model IEnumerable<UploadFileToDb.Models.ApprovalForm>
+
+<h2>Submitted Forms</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Submission Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var form in Model)
+        {
+            <tr>
+                <td>@form.Title</td>
+                <td>@form.Description</td>
+                <td>@form.SubmissionDate.ToShortDateString()</td>
+                <td>@form.Status</td>
+                <td>
+                    <a asp-action="Approve" asp-route-id="@form.Id" class="btn btn-success">Approve</a>
+                    <a asp-action="Reject" asp-route-id="@form.Id" class="btn btn-danger">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
